@@ -49,9 +49,9 @@ TictactoeGame >> areThere3InARowfor: symbol inPositions: positions [
 
 { #category : #'instance creation' }
 TictactoeGame >> at: aPoint place: aSymbol [
-	matrix at: aPoint y at: aPoint x put: aSymbol
-
-
+	| value |
+	value := matrix at: aPoint y at: aPoint x.
+	value ifNil: [ matrix at: aPoint y at: aPoint x put: aSymbol ]
 ]
 
 { #category : #initialization }
@@ -61,9 +61,28 @@ TictactoeGame >> initialize [
 
 { #category : #'instance creation' }
 TictactoeGame >> open [ 
-	| canvas |
+	<script: 'self new open'>
+	| canvas line1 line2 line3 line4 |
+	line1:= RSLine new.
+	line2:= RSLine new.
+	line3:= RSLine new.
+	line4:= RSLine new.
+	line1 startPoint: 30@0 .
+	line1 endPoint: 30@90.
+	line2 startPoint: 60@0 .
+	line2 endPoint: 60@90.
+	line3 startPoint: 90@30 .
+	line3 endPoint: 0@30.
+	line4 startPoint: 0@60 .
+	line4 endPoint: 90@60.
 	canvas:= RSCanvas new.
+	canvas add: line1. 
+	canvas add: line2.
+	canvas add: line3.
+	canvas add: line4.
+	canvas zoomToFit.
 	^ canvas open. 
+	
 ]
 
 { #category : #printing }

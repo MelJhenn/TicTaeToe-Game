@@ -63,6 +63,8 @@ o|o|o
  | | 
 '.
 	self assert: game areThere3InARow.
+
+	
 ]
 
 { #category : #tests }
@@ -93,4 +95,37 @@ GameTest >> testBasic2 [
 - - -
  | | 
 '.
+]
+
+{ #category : #tests }
+GameTest >> testOnly1InACell [
+	|game|
+	game:= TictactoeGame new.
+	game at: 1@2place: 'o'.
+	game at: 2@2 place: 'o'.
+	game at: 3@2 place: 'o'.
+	self assert: game asString equals: '
+ | | 
+- - -
+o|o|o
+- - -
+ | | 
+'.
+	self assert: game areThere3InARow.
+	game at: 2@2 place: 'x'.
+	self assert: game asString equals: '
+ | | 
+- - -
+o|o|o
+- - -
+ | | 
+'.
+	
+]
+
+{ #category : #tests }
+GameTest >> testStep [ 
+	|game|
+	game:= TictactoeGame new.
+	
 ]
