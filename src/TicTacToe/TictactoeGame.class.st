@@ -62,7 +62,8 @@ TictactoeGame >> initialize [
 { #category : #'instance creation' }
 TictactoeGame >> open [ 
 	<script: 'self new open'>
-	| canvas line1 line2 line3 line4 |
+	| canvas line1 line2 line3 line4 label1|
+	self at: 2@2  place: 'x' .
 	line1:= RSLine new.
 	line2:= RSLine new.
 	line3:= RSLine new.
@@ -81,7 +82,14 @@ TictactoeGame >> open [
 	canvas add: line3.
 	canvas add: line4.
 	canvas zoomToFit.
+	label1 := RSLabel new.
+	canvas add: label1.
+	label1 text: 'x'.
+	label1  position: 45@45.
+	label1 fontSize: 28.
+	label1  fontName: 'Courier New'.
 	^ canvas open. 
+	
 	
 ]
 
