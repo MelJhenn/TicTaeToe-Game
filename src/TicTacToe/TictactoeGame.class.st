@@ -47,7 +47,7 @@ TictactoeGame >> areThere3InARowfor: symbol inPositions: positions [
 	^true 
 ]
 
-{ #category : #'instance creation' }
+{ #category : #accessing }
 TictactoeGame >> at: aPoint place: aSymbol [
 	| value |
 	value := matrix at: aPoint y at: aPoint x.
@@ -59,35 +59,22 @@ TictactoeGame >> initialize [
 	matrix:= Array2D rows: 3 columns: 3 
 ]
 
-{ #category : #'instance creation' }
+{ #category : #opening }
 TictactoeGame >> open [ 
 	<script: 'self new open'>
-	| canvas line1 line2 line3 line4 label1|
+	| canvas |
 	self at: 2@2  place: 'x' .
-	line1:= RSLine new.
-	line2:= RSLine new.
-	line3:= RSLine new.
-	line4:= RSLine new.
-	line1 startPoint: 30@0 .
-	line1 endPoint: 30@90.
-	line2 startPoint: 60@0 .
-	line2 endPoint: 60@90.
-	line3 startPoint: 90@30 .
-	line3 endPoint: 0@30.
-	line4 startPoint: 0@60 .
-	line4 endPoint: 90@60.
+	self at: 1@1  place: 'x' .
+	self at: 3@3  place: 'x' .
+	self at: 1@2  place: 'o' .
 	canvas:= RSCanvas new.
-	canvas add: line1. 
-	canvas add: line2.
-	canvas add: line3.
-	canvas add: line4.
-	canvas zoomToFit.
-	label1 := RSLabel new.
-	canvas add: label1.
-	label1 text: 'x'.
-	label1  position: 45@45.
-	label1 fontSize: 28.
-	label1  fontName: 'Courier New'.
+	self renderBoardOn: canvas.
+	self renderMatrixOn: canvas.
+	canvas when: RSMouseClick  do: [ : event | 
+		self putValue: 'x' fromScreen: event position. 
+		self renderMatrixOn:canvas.
+		canvas signalUpdate. ]. 
+	
 	^ canvas open. 
 	
 	
@@ -110,4 +97,55 @@ TictactoeGame >> printOn: stream [
 			].
 	
 	stream cr.
+]
+
+{ #category : #accessing }
+TictactoeGame >> putValue: aSymbol fromScreen: aPoint [ 
+	|newPosition |
+	newPosition := (aPoint/30) asIntegerPoint +1.
+	self at: newPosition  place: aSymbol. 
+	
+]
+
+{ #category : #rendering }
+TictactoeGame >> renderBoardOn: canvas [
+	|line1 line2 line3 line4 | 
+	line1:= RSLine new.
+	line2:= RSLine new.
+	line3:= RSLine new.
+	line4:= RSLine new.
+	line1 startPoint: 30@0 .
+	line1 endPoint: 30@90.
+	line2 startPoint: 60@0 .
+	line2 endPoint: 60@90.
+	line3 startPoint: 90@30 .
+	line3 endPoint: 0@30.
+	line4 startPoint: 0@60 .
+	line4 endPoint: 90@60.
+	canvas add: line1. 
+	canvas add: line2.
+	canvas add: line3.
+	canvas add: line4.
+	canvas zoomToFit.
+]
+
+{ #category : #rendering }
+TictactoeGame >> renderMatrixOn: canvas [ 
+	|label1 value |
+	1 to: 3 do: [ :row | 
+		1 to: 3 do: [ :column | 
+			value:= matrix at: row at: column.
+			value ifNotNil: [ 
+				label1 := RSLabel new.
+				canvas add: label1.
+				label1 text: value.
+				label1  position: column@row *30 -15.
+				label1 fontSize: 28.
+				label1  fontName: 'Courier New'. ]
+			]
+		 ].
+	
+ 
+	 
+	
 ]

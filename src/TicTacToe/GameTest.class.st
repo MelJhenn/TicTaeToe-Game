@@ -124,6 +124,20 @@ o|o|o
 ]
 
 { #category : #tests }
+GameTest >> testPutValueFromScreen [
+	|game|
+	game:= TictactoeGame new.
+	game putValue: 'x' fromScreen: 75.4@15.099999999999998. 
+	self assert: game asString equals: '
+ | |x
+- - -
+ | | 
+- - -
+ | | 
+'.
+]
+
+{ #category : #tests }
 GameTest >> testStep [ 
 	|game|
 	game:= TictactoeGame new.
