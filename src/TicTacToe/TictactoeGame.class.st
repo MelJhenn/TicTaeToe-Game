@@ -1,3 +1,7 @@
+"
+A simple tic tac toe game.
+
+"
 Class {
 	#name : #TictactoeGame,
 	#superclass : #Object,

@@ -1,7 +1,7 @@
 Class {
 	#name : #GameTest,
 	#superclass : #TestCase,
-	#category : #TicTacToe
+	#category : #'TicTacToe-Tests'
 }
 
 { #category : #tests }
