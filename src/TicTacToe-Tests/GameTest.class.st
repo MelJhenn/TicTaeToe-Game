@@ -136,10 +136,3 @@ GameTest >> testPutValueFromScreen [
  | | 
 '.
 ]
-
-{ #category : #tests }
-GameTest >> testStep [ 
-	|game|
-	game:= TictactoeGame new.
-	
-]
