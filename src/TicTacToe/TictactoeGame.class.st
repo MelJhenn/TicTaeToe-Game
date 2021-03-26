@@ -86,22 +86,40 @@ TictactoeGame >> canvas [
 ]
 
 { #category : #rendering }
-TictactoeGame >> inform: aString inCanvas: canvas [
-	|label box |
+TictactoeGame >> colorFor: value [
+	^ value = 'x'
+		ifTrue: [ Color magenta ]
+		ifFalse: [ '#BFFF00' ]
+]
+
+{ #category : #rendering }
+TictactoeGame >> inform: anArray inCanvas: canvas [
+	|bigLabel box smallLabel group|
 	box:= RSBox new.
 	box 
 		position: 45@45;
 		color: (Color white alpha: 0.8);
 		cornerRadius: 5;
 		border: (RSBorder new color: Color black ).
-	label:= RSLabel new.
-	label 
-		text: aString;
-		position: 45@45.
-	box width: label width +10.
-	box height: label height. 
+	bigLabel:= RSLabel new.
+	bigLabel
+		fontName: 'Courier New';
+		text: anArray first key;
+		fontSize: anArray first value;
+		position: 45@35;
+		color: (self colorFor: anArray first key).
+	smallLabel:= RSLabel new.
+	smallLabel 
+		text: anArray second  key;
+		fontSize: anArray second value;
+		position: 45@55.
+	group:= RSGroup new.
+	group add: bigLabel; add: smallLabel. 
+	box width: group width +5.
+	box height: group height. 
 	canvas add: box.
-	canvas add: label.
+	canvas add: bigLabel.
+	canvas add: smallLabel.
 	
 	
 	
@@ -184,24 +202,20 @@ TictactoeGame >> renderBoardOn: canvas [
 ]
 
 { #category : #rendering }
-TictactoeGame >> renderMatrixOn: canvas [ 
-	|label1 value |
+TictactoeGame >> renderMatrixOn: canvas [
+	| label value color |
 	1 to: 3 do: [ :row | 
 		1 to: 3 do: [ :column | 
-			value:= matrix at: row at: column.
-			value ifNotNil: [ 
-				label1 := RSLabel new.
-				canvas add: label1.
-				label1 text: value.
-				label1  position: column@row *30 -15.
-				label1 fontSize: 28.
-				label1  fontName: 'Courier New'. ]
-			]
-		 ].
-	
- 
-	 
-	
+			value := matrix at: row at: column.
+			value
+				ifNotNil: [ color := self colorFor: value.
+					label := RSLabel new.
+					canvas add: label.
+					label text: value.
+					label color: color.
+					label position: column @ row * 30 - 15.
+					label fontSize: 28.
+					label fontName: 'Courier New' ] ] ]
 ]
 
 { #category : #rendering }
@@ -212,7 +226,7 @@ TictactoeGame >> renderOn: canvas [
 	self renderMatrixOn: canvas.
 	symbol:= turn ifTrue: [ 'o' ] ifFalse: [ 'x' ].
 	(self areThere3InARowfor: symbol)  ifTrue: [ 
-		self inform: 'The winner is ', symbol inCanvas: canvas.
+		self inform: { symbol -> 20. 'You are the winner ' -> 8 }  inCanvas: canvas.
 		 ].
 	canvas camera zoomToFit: canvas extent 
 		rectangle: (Rectangle origin: 0@0 corner: 90@90).
