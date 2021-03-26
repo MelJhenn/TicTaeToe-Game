@@ -98,6 +98,14 @@ GameTest >> testBasic2 [
 ]
 
 { #category : #tests }
+GameTest >> testCanvas [
+	|game image|
+	game:= TictactoeGame  new.
+	image:= game asForm.
+	self assert: image class equals: Form.
+]
+
+{ #category : #tests }
 GameTest >> testOnly1InACell [
 	|game|
 	game:= TictactoeGame new.

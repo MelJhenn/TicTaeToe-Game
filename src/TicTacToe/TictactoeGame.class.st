@@ -52,11 +52,37 @@ TictactoeGame >> areThere3InARowfor: symbol inPositions: positions [
 	^true 
 ]
 
+{ #category : #converting }
+TictactoeGame >> asForm [
+	<script: 'self new asForm inspect'>
+	|canvas formCanvas morph |
+	formCanvas := FormCanvas extent: 500@500.
+	canvas := self canvas.
+	morph := canvas createMorph.
+	morph extent: 500@500.
+	morph drawOn: formCanvas.
+	^formCanvas form.
+]
+
 { #category : #accessing }
 TictactoeGame >> at: aPoint place: aSymbol [
 	| value |
 	value := matrix at: aPoint y at: aPoint x.
 	value ifNil: [ matrix at: aPoint y at: aPoint x put: aSymbol ]
+]
+
+{ #category : #accessing }
+TictactoeGame >> canvas [
+	| canvas |
+	canvas:= RSCanvas new.
+	self renderOn: canvas.
+	canvas when: RSMouseClick do: [ :event |
+		self processPosition: event position. 
+	   self renderOn: canvas.
+		].
+	
+	^ canvas. 
+	
 ]
 
 { #category : #rendering }
@@ -91,13 +117,8 @@ TictactoeGame >> initialize [
 { #category : #opening }
 TictactoeGame >> open [ 
 	<script: 'self new open'>
-	| canvas |
-	canvas:= RSCanvas new.
-	self renderBoardOn: canvas.
-	self renderMatrixOn: canvas.
-	canvas when: RSMouseClick send: #processClick: to: self. 
 	
-	^ canvas open. 
+	^ self canvas open. 
 	
 	
 ]
@@ -122,18 +143,12 @@ TictactoeGame >> printOn: stream [
 ]
 
 { #category : #events }
-TictactoeGame >> processClick: event [ 
-	|symbol canvas|
-	canvas:= event canvas.
-	self areThere3InARow ifTrue: [^ self restart: canvas ].
+TictactoeGame >> processPosition: position [
+	|symbol|
+	self areThere3InARow ifTrue: [^ self restart ].
 	symbol:= turn ifTrue: ['x'] ifFalse: [ 'o' ].
 	turn:= turn not.
-	self putValue: symbol  fromScreen: event position. 
-	self renderMatrixOn:canvas.
-	(self areThere3InARowfor: symbol)  ifTrue: [ 
-		self inform: 'The winner is ', symbol inCanvas: canvas ].
-	
-	canvas signalUpdate. 
+	self putValue: symbol  fromScreen: position. 
 	
 	
 ]
@@ -165,7 +180,7 @@ TictactoeGame >> renderBoardOn: canvas [
 	canvas add: line2.
 	canvas add: line3.
 	canvas add: line4.
-	canvas zoomToFit.
+	
 ]
 
 { #category : #rendering }
@@ -189,12 +204,25 @@ TictactoeGame >> renderMatrixOn: canvas [
 	
 ]
 
-{ #category : #events }
-TictactoeGame >> restart: canvas [
-	matrix:= Array2D rows: 3 columns: 3.
+{ #category : #rendering }
+TictactoeGame >> renderOn: canvas [ 
+	|symbol|
 	canvas shapes do: [:shape| shape remove].
 	self renderBoardOn: canvas.
-	canvas signalUpdate.
+	self renderMatrixOn: canvas.
+	symbol:= turn ifTrue: [ 'o' ] ifFalse: [ 'x' ].
+	(self areThere3InARowfor: symbol)  ifTrue: [ 
+		self inform: 'The winner is ', symbol inCanvas: canvas.
+		 ].
+	canvas camera zoomToFit: canvas extent 
+		rectangle: (Rectangle origin: 0@0 corner: 90@90).
+	canvas signalUpdate.  
+]
+
+{ #category : #events }
+TictactoeGame >> restart [
+	matrix:= Array2D rows: 3 columns: 3.
+	
 	
 	
 	
