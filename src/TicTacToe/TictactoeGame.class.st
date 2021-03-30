@@ -66,9 +66,11 @@ TictactoeGame >> asForm [
 
 { #category : #accessing }
 TictactoeGame >> at: aPoint place: aSymbol [
-	| value |
+	| value res|
 	value := matrix at: aPoint y at: aPoint x.
-	value ifNil: [ matrix at: aPoint y at: aPoint x put: aSymbol ]
+	res:= value isNil.
+	value ifNil: [ matrix at: aPoint y at: aPoint x put: aSymbol ].
+	^res.
 ]
 
 { #category : #accessing }
@@ -170,13 +172,13 @@ TictactoeGame >> printOn: stream [
 
 { #category : #events }
 TictactoeGame >> processPosition: position [
-	|symbol|
+	|symbol hasChanged|
 	self areThere3InARow ifTrue: [^ self restart ].
 	self isItADraw  ifTrue: [^ self restart ].
 	"(self areThere3InARow or: [self isItADraw]) ifTrue: [^ self restart ]."
 	symbol:= turn ifTrue: ['x'] ifFalse: [ 'o' ].
-	turn:= turn not.
-	self putValue: symbol  fromScreen: position. 
+	hasChanged:= self putValue: symbol  fromScreen: position. 
+	hasChanged ifTrue: [ turn:= turn not. ]
 	
 	
 ]
@@ -185,7 +187,7 @@ TictactoeGame >> processPosition: position [
 TictactoeGame >> putValue: aSymbol fromScreen: aPoint [ 
 	|newPosition |
 	newPosition := (aPoint/30) asIntegerPoint +1.
-	self at: newPosition  place: aSymbol. 
+	^self at: newPosition  place: aSymbol. 
 	
 ]
 

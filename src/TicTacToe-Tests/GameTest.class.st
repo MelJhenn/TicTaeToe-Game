@@ -106,6 +106,51 @@ GameTest >> testCanvas [
 ]
 
 { #category : #tests }
+GameTest >> testDoubleClick [
+	| game |
+	game:= TictactoeGame new.
+	self assert: game asString equals: '
+ | | 
+- - -
+ | | 
+- - -
+ | | 
+'.
+	game processPosition: 10@10.
+	self assert: game asString equals: '
+x| | 
+- - -
+ | | 
+- - -
+ | | 
+'.
+	game processPosition: 45@40.
+	self assert: game asString equals: '
+x| | 
+- - -
+ |o| 
+- - -
+ | | 
+'.
+	game processPosition: 47@46.
+	self assert: game asString equals: '
+x| | 
+- - -
+ |o| 
+- - -
+ | | 
+'.
+	game processPosition: 35@10.
+	self assert: game asString equals: '
+x|x| 
+- - -
+ |o| 
+- - -
+ | | 
+'.
+]
+
+{ #category : #tests }
 GameTest >> testDraw [ 
 	| game |
 	game:= TictactoeGame new.
