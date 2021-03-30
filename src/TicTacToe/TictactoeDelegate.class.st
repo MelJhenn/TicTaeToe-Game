@@ -5,7 +5,8 @@ Class {
 	#name : #TictactoeDelegate,
 	#superclass : #ZnStaticFileServerDelegate,
 	#instVars : [
-		'game'
+		'games',
+		'sessionId'
 	],
 	#category : #TicTacToe
 }
@@ -22,13 +23,30 @@ TictactoeDelegate >> convertToText: image [
 ]
 
 { #category : #accessing }
-TictactoeDelegate >> game [
-	^ game
+TictactoeDelegate >> currentGame [
+	^ sessionId ifNil: [  
+		|game|	
+		game:= TictactoeGame new.
+		games add: game. 
+		sessionId := games size.
+		game 
+	] ifNotNil: [
+		games at: sessionId.	
+	]. 
+	
+
+
+	
 ]
 
 { #category : #accessing }
-TictactoeDelegate >> game: anObject [
-	game := anObject
+TictactoeDelegate >> games [
+	^ games
+]
+
+{ #category : #accessing }
+TictactoeDelegate >> games: aCollection [
+	games := aCollection
 ]
 
 { #category : #public }
@@ -42,12 +60,16 @@ TictactoeDelegate >> handleRequest: request [
 			 ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #public }
 TictactoeDelegate >> positionFrom: request [
 	|fields x y|
 	request entity ifNil: [^nil].
 	fields:= request entity fields.
-	x:= fields at: 'x'.
+	sessionId := fields at: 'id'.
+	sessionId := sessionId 
+		ifEmpty: [ nil] 
+		ifNotEmpty: [sessionId asNumber].
+	x:= fields at: 'x' ifAbsent: [^nil].
 	y:= fields at: 'y'.
 	x:= x asNumber.
 	y:= y asNumber.
@@ -58,14 +80,16 @@ TictactoeDelegate >> positionFrom: request [
 
 { #category : #public }
 TictactoeDelegate >> processCoordinates: request [
-	|image text position |
+	|image base64 position entity|
 	position:= self positionFrom: request.
 	position ifNotNil: [ 
-		game processPosition: position.
+		self currentGame processPosition: position.
 		 ].
-	image:= self game asForm . 
-	text:= self convertToText: image.
-	^ ZnResponse ok: (ZnEntity text: text).
+	image:= self currentGame asForm . 
+	base64:= self convertToText: image.
+	entity:= ZnEntity text: base64, ',', sessionId asString.
+	sessionId := nil.
+	^ ZnResponse ok: entity .
 	
 	
 ]

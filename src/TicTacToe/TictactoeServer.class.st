@@ -6,14 +6,14 @@ Class {
 	#name : #TictactoeServer,
 	#superclass : #Object,
 	#instVars : [
-		'game'
+		'games'
 	],
 	#category : #TicTacToe
 }
 
 { #category : #accessing }
-TictactoeServer >> game [
-	^game.
+TictactoeServer >> games [
+	^games.
 ]
 
 { #category : #accessing }
@@ -21,11 +21,11 @@ TictactoeServer >> start [
 	<script: 'self new start. 
 	 WebBrowser openOn: ''http://localhost:1701''
 	'>
-	game:= TictactoeGame  new.
+	games:= OrderedCollection new.
 	(ZnServer startDefaultOn: 1701) 
 		delegate: (TictactoeDelegate new
 			directory: '.' asFileReference; 
-			game: game;
+			games: games;
 			yourself).	
 			
 	
