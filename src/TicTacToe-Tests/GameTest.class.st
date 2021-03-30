@@ -106,6 +106,41 @@ GameTest >> testCanvas [
 ]
 
 { #category : #tests }
+GameTest >> testDraw [ 
+	| game |
+	game:= TictactoeGame new.
+	game at: 1@2place: 'x'.
+	game at: 2@2 place: 'x'.
+	self assert: game asString equals: '
+ | | 
+- - -
+x|x| 
+- - -
+ | | 
+'.
+	self deny: game isItADraw.
+	game:= TictactoeGame new.
+	game at: 1@2place: 'x'.
+	game at: 2@2 place: 'x'.
+	game at: 3@2 place: 'o'.
+	game at: 1@1place: 'o'.
+	game at: 2@1 place: 'x'.
+	game at: 3@1 place: 'o'.
+	game at: 1@3place: 'x'.
+	game at: 2@3 place: 'x'.
+	game at: 3@3 place: 'o'.
+	self assert: game asString equals: '
+o|x|o
+- - -
+x|x|o
+- - -
+x|x|o
+'.
+	self assert: game isItADraw.
+
+]
+
+{ #category : #tests }
 GameTest >> testOnly1InACell [
 	|game|
 	game:= TictactoeGame new.

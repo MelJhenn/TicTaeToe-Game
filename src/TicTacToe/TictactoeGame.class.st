@@ -89,7 +89,10 @@ TictactoeGame >> canvas [
 TictactoeGame >> colorFor: value [
 	^ value = 'x'
 		ifTrue: [ Color magenta ]
-		ifFalse: [ '#BFFF00' ]
+		ifFalse: [ value = 'o'
+			ifTrue: [ '#BFFF00'  ] 
+			ifFalse: [ Color gray ]
+		].
 ]
 
 { #category : #rendering }
@@ -98,7 +101,7 @@ TictactoeGame >> inform: anArray inCanvas: canvas [
 	box:= RSBox new.
 	box 
 		position: 45@45;
-		color: (Color white alpha: 0.8);
+		color: (Color white alpha: 0.9);
 		cornerRadius: 5;
 		border: (RSBorder new color: Color black ).
 	bigLabel:= RSLabel new.
@@ -130,6 +133,11 @@ TictactoeGame >> inform: anArray inCanvas: canvas [
 TictactoeGame >> initialize [ 
 	matrix:= Array2D rows: 3 columns: 3.
 	turn:= true.
+]
+
+{ #category : #testing }
+TictactoeGame >> isItADraw [
+	^matrix allSatisfy: [ :each| each notNil  ]
 ]
 
 { #category : #opening }
@@ -164,6 +172,8 @@ TictactoeGame >> printOn: stream [
 TictactoeGame >> processPosition: position [
 	|symbol|
 	self areThere3InARow ifTrue: [^ self restart ].
+	self isItADraw  ifTrue: [^ self restart ].
+	"(self areThere3InARow or: [self isItADraw]) ifTrue: [^ self restart ]."
 	symbol:= turn ifTrue: ['x'] ifFalse: [ 'o' ].
 	turn:= turn not.
 	self putValue: symbol  fromScreen: position. 
@@ -227,8 +237,11 @@ TictactoeGame >> renderOn: canvas [
 	symbol:= turn ifTrue: [ 'o' ] ifFalse: [ 'x' ].
 	(self areThere3InARowfor: symbol)  ifTrue: [ 
 		self inform: { symbol -> 20. 'You are the winner ' -> 8 }  inCanvas: canvas.
-		 ].
-	canvas camera zoomToFit: canvas extent 
+	] ifFalse: [
+		self isItADraw ifTrue: [ 
+			self inform: { 'xo' -> 20. 'DRAW' -> 8 }  inCanvas: canvas. ].
+	].
+	canvas camera zoomToFit: canvas extent
 		rectangle: (Rectangle origin: 0@0 corner: 90@90).
 	canvas signalUpdate.  
 ]
