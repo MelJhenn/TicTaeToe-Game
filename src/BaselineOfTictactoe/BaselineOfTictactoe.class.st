@@ -18,5 +18,5 @@ BaselineOfTictactoe >> baseline: spec [
 
 			"Groups"
 			spec 
-				group: 'default' with: #('Tictactoe' 'TicTacToe-Tests') ]
+				group: 'default' with: #('TicTacToe' 'TicTacToe-Tests') ]
 ]
